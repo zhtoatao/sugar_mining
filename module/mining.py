@@ -68,12 +68,12 @@ def sorting(level, number, level_name):
             log_message = log_creater.write_log(f"{level_name} {level}-{number} 什么都没有")
             print(log_message)
             break
-        if image.co("c_tansuoquan.png", False, 1, 0.98):
+        if image.co("c_tansuoquan.png", False, 0.2, 0.98):
             log_message = log_creater.write_log(f"成功找到c-探索券！位置在 {level_name} {level}-{number}")
             print(log_message)
             c_tansuoquan_list.append((level_name, level, number))
             break
-        if image.co("c_saodangquan.png", False, 1, 0.98):
+        if image.co("c_saodangquan.png", False, 0.2, 0.98):
             log_message = log_creater.write_log(f"成功找到c-扫荡券！位置在 {level_name} {level}-{number}")
             print(log_message)
             c_saodangquan_list.append((level_name, level, number))
@@ -88,7 +88,7 @@ def sorting(level, number, level_name):
             print(log_message)
             b_jiajvbi_list.append((level_name, level, number))
             break
-        if image.co("b_srquan.png", False):
+        if image.coc("b_srquan.png", False,1, 0.9):
             log_message = log_creater.write_log(f"成功找到b-sr券！位置在 {level_name} {level}-{number}")
             print(log_message)
             b_srquan_list.append((level_name, level, number))
@@ -105,6 +105,11 @@ def sorting(level, number, level_name):
             break
         if image.co("a_ssrquan.png", False):
             log_message = log_creater.write_log(f"成功找到a-ssr券！位置在 {level_name} {level}-{number}")
+            print(log_message)
+            a_ssrquan_list.append((level_name, level, number))
+            break
+        if image.co("a_lanhe.png", False):
+            log_message = log_creater.write_log(f"成功找到a-蓝盒！位置在 {level_name} {level}-{number}")
             print(log_message)
             a_ssrquan_list.append((level_name, level, number))
             break
@@ -131,7 +136,7 @@ def result_saver():
     content += "b-sr券：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in b_srquan_list]) + "\n"
     content += "b-金币：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in b_jinbi_list]) + "\n"
     content += "a-专武：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in a_zhuanwu_list]) + "\n"
-    content += "a-ssr券：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in a_ssrquan_list]) + "\n"
+    content += "a-ssr券（蓝盒）：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in a_ssrquan_list]) + "\n"
     content += "s-星糖石：" + ",".join([f"{level_name}{level}-{number}" for level_name, level, number in s_xingtangshi_list]) + "\n"
     with open(result_file_path, 'w', encoding='utf-8') as file:
         file.write(content)
@@ -143,7 +148,7 @@ def result_saver():
 def sort_result():
     result_folder = 'result'
     result_file_path = os.path.join(result_folder, 'result.txt')
-    processed_file_path = os.path.join(result_folder, 'processed_result.txt')
+    sort_result_file_path = os.path.join(result_folder, 'sort_result.txt')
 
     with open(result_file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
@@ -156,7 +161,7 @@ def sort_result():
         "b-sr券": {"N": [], "H": [], "VH": []},
         "b-金币": {"N": [], "H": [], "VH": []},
         "a-专武": {"N": [], "H": [], "VH": []},
-        "a-ssr券": {"N": [], "H": [], "VH": []},
+        "a-ssr券（蓝盒）": {"N": [], "H": [], "VH": []},
         "s-星糖石": {"N": [], "H": [], "VH": []}
     }
 
@@ -166,21 +171,24 @@ def sort_result():
             items = details.split(",")
             for item in items:
                 if item:
-                    level_name, level_number = re.match(r'([^\d]+)(\d+-\d+)', item).groups()
-                    data[category][level_name].append(f"{level_name}{level_number}")
+                    match = re.match(r'([^\d]+)(\d+-\d+)', item)
+                    if match:
+                        level_name, level_number = match.groups()
+                        if level_name in ['N', 'H', 'VH']:
+                            data[category][level_name].append(level_number)
 
-    processed_content = ""
+    sort_content = ""
     for category, levels in data.items():
-        processed_content += f"{category}：\n"
+        sort_content += f"{category}：\n"
         for level_name, numbers in levels.items():
             if numbers:
-                processed_content += f"  {level_name}：{','.join(numbers)}\n"
-        processed_content += "\n"
+                sort_content += f"  {level_name}：{','.join(numbers)}\n"
+        sort_content += "\n"
 
-    with open(processed_file_path, 'w', encoding='utf-8') as file:
-        file.write(processed_content)
+    with open(sort_result_file_path, 'w', encoding='utf-8') as file:
+        file.write(sort_content)
 
-    print(f"数据处理完成！预览：\n{processed_content}")
+    print(f"数据处理完成！预览：\n{sort_content}")
 ###################################################################################################################################################
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ###################################################################################################################################################
@@ -368,12 +376,41 @@ def mining():
     ##########
     ##########     正在挖vh级的矿
     ##########
+    while not image.co("vh.png"):
+        image.co("vh_.png")
+    while not image.co("mininghome2.png",False):
+        image.co(image___)
+    if vh_ <=10:
+        while vh_ <= 5:
+            print(f'正在挖VH{vh}-{vh_}的矿')
+            image.click(755 + (vh_ - 1) * 90,530,1)
+            while not (image.co("success.png") or image.co("failure.png")):
+                print(f"VH{vh}-{vh_}的矿挖完了，开始识别")
 
-    while True:
-        if image.co("vh.png"):
+            sorting(vh,vh_,"VH")
+            vh_ +=1
+            while not image.co("mininghome3.png"):
+                image.co("ok2.png")
+            complete_1_1 = True
             break
-        if image.co("vh__.png"):
+
+        while 6 <= vh_ <=10:
+            if complete_1_1:
+                complete_1_1 = False
+                break
+
+            print(f'正在挖{vh}级第{vh_}关的矿')
+            image.click(755 + (vh_ - 6) * 90,630,1)
+            while not (image.co("success.png") or image.co("failure.png")):
+                print(f"VH{vh}-{vh_}的矿挖完了，开始识别")
+
+            sorting(vh,vh_,"VH")
+            vh_ +=1
+            while not image.co("mininghome3.png"):
+                image.co("ok2.png")
+            complete_1_1 = False
+            #vh_ = 1
             break
-        if image.co("vh_.png"):
-            log_message = log_creater.write_log("开始挖VH的矿")
-            print(log_message)
+
+    while not image.co("task2.png",False):
+        image.co("close.png")
